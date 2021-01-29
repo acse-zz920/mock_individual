@@ -51,6 +51,7 @@ int main(int argc, const char *argv[])
         {
             break;
         }
+        std::cout << "\n";
     }
     return EXIT_SUCCESS;
 }

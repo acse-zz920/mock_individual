@@ -85,7 +85,8 @@ void runAnswerA3()
     std::string str;
     char to_change, change_to;
     std::cout << "Enter a string: ";
-    std::getline(std::cin, str);
+    std::cin.ignore();
+    std::getline(std::cin, str, '\n');
     std::cout << "Enter character to change: ";
     std::cin >> to_change;
     std::cout << "Enter character to change to: ";
@@ -144,15 +145,13 @@ public:
 
     void readInData()
     {
-        std::cout << "Enter the person's first name: ";
-        std::cin.clear();
-        std::cin >> this->first_name;
-        std::cout << "Enter the person's second name: ";
-        std::cin.clear();
-        std::cin >> this->second_name;
-        std::cout << "Enter the person's telephone number: ";
-        std::cin.clear();
-        std::cin >> this->telephone_number;
+        std::cout << "Enter the person's first name (don't include spaces): ";
+        std::cin >> first_name;
+        std::cout << "Enter the person's second name (don't include spaces): ";
+        std::cin >> second_name;
+        std::cout << "Enter the person's telephone number "
+                  << "(don't include spaces): ";
+        std::cin >> telephone_number;
     }
 
     bool matchSurName(const std::string &surname)
@@ -215,7 +214,8 @@ void runAnswerB1()
             break;
         }
         std::cout << "Enter the surname: ";
-        std::cin >> surname;
+        std::cin.ignore();
+        std::getline(std::cin, surname, '\n');
         for (int i = 0; i < num_contacts; i++)
         {
             if (contacts[i].matchSurName(surname))
@@ -365,11 +365,6 @@ public:
           data_(new T[capacity_], array_deleter)
     {
         std::copy(il.begin(), il.end(), data_.get());
-        /*int i = 0;
-        for (auto it = il.begin(); it != il.end(); it++)
-        {
-            data_.get()[i++] = *it;
-        }*/
     }
 
     T &operator[](std::size_t n)
@@ -389,7 +384,6 @@ public:
             throw std::invalid_argument(
                 "myVector operator[]: index out of range");
         }
-        //return (*data)[n];
         return data_.get()[n];
     }
 
