@@ -47,7 +47,8 @@ void runAnswerA2()
     } while (one <= 0);
     do
     {
-        std::cout << "Enter an integer greater than 0 and less than the previous one ("
+        std::cout << "Enter an integer greater than 0 "
+                  << "and less than the previous integer ("
                   << one << "): ";
         std::cin >> two;
     } while ((two <= 0) || (two > one));
@@ -95,7 +96,8 @@ void runAnswerA3()
 class Point3D
 {
 public:
-    Point3D() : x(0.0), y(0.0), z(0.0) {}
+    Point3D(double x = 0.0, double y = 0.0, double z = 0.0)
+        : x(x), y(y), z(z) {}
 
     void readCoordinates()
     {
@@ -198,7 +200,8 @@ void runAnswerB1()
     std::ofstream fs("contacts.txt");
     for (int i = 0; i < num_contacts; i++)
     {
-        std::cout << "Enter contact information for person " << i << ":" << std::endl;
+        std::cout << "Enter contact information for person "
+                  << i << ":" << std::endl;
         contacts[i].readInData();
         contacts[i].save(fs);
     }
@@ -240,7 +243,8 @@ void countAppearances(int *arr, int n)
         }
         if (arr[i] > kUpperBound)
         {
-            throw std::invalid_argument("Array element exceeds the upper bound");
+            throw std::invalid_argument(
+                "Array element exceeds the upper bound");
         }
         max_num = std::max(max_num, arr[i]);
     }
@@ -263,9 +267,11 @@ void countAppearances(int *arr, int n)
     }
     for (int i = 1; i <= max_appearances; i++)
     {
-        std::cout << appearances_count[i] << " number/s appear " << i << " times\n";
+        std::cout << appearances_count[i] << " number/s appear "
+                  << i << " times\n";
     }
-    std::cout << "No numbers appear more than " << max_appearances << " times\n";
+    std::cout << "No numbers appear more than " << max_appearances
+              << " times\n";
     delete[] appearances;
     delete[] appearances_count;
 }
@@ -370,7 +376,8 @@ public:
     {
         if (n >= this->size_)
         {
-            throw std::invalid_argument("myVector operator[]: index out of range");
+            throw std::invalid_argument(
+                "myVector operator[]: index out of range");
         }
         return data_.get()[n];
     }
@@ -379,7 +386,8 @@ public:
     {
         if (n >= this->size_)
         {
-            throw std::invalid_argument("myVector operator[]: index out of range");
+            throw std::invalid_argument(
+                "myVector operator[]: index out of range");
         }
         //return (*data)[n];
         return data_.get()[n];
@@ -389,7 +397,8 @@ public:
     {
         if (n >= this->size_)
         {
-            throw std::invalid_argument("myVector operator[]: index out of range");
+            throw std::invalid_argument(
+                "myVector operator[]: index out of range");
         }
         return data_.get()[n];
     }
@@ -398,7 +407,8 @@ public:
     {
         if (n >= this->size_)
         {
-            throw std::invalid_argument("myVector operator[]: index out of range");
+            throw std::invalid_argument(
+                "myVector operator[]: index out of range");
         }
         return data_.get()[n];
     }
