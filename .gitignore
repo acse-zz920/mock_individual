@@ -1,4 +1,5 @@
 .vscode/
 run
 *.o
+*.txt
 

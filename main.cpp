@@ -8,7 +8,8 @@ int main(int argc, const char *argv[])
     std::string question;
     while (true)
     {
-        std::cout << "Enter a question index (i.e. A1) or enter exit: ";
+        std::cout << "Enter a question index (i.e. A1) "
+                  << "or enter something else to exit: ";
         std::cin >> question;
         if (question == "A1")
         {

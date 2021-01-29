@@ -5,6 +5,7 @@
 #include <exception>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <string>
 
 void runAnswerA1()
@@ -319,16 +320,259 @@ void runAnswerB3()
     fs.close();
 }
 
+template <typename Ta, typename Tb>
+bool checkIfSameType(const Ta &a, const Tb &b)
+{
+    return (typeid(a) == typeid(b));
+}
+
 void runAnswerC1()
 {
-    //
+    int ia = 0, ib = 0;
+    float fa = 0.f, fb = 0.f;
+    double da = 0.0, db = 0.0;
+    Contact ca, cb;
+
+    std::cout << std::boolalpha << checkIfSameType(ia, ib) << " == true\n";
+    std::cout << std::boolalpha << checkIfSameType(fa, fb) << " == true\n";
+    std::cout << std::boolalpha << checkIfSameType(da, db) << " == true\n";
+    std::cout << std::boolalpha << checkIfSameType(ca, cb) << " == true\n";
+    std::cout << std::boolalpha << checkIfSameType(ia, fa) << " == false\n";
+    std::cout << std::boolalpha << checkIfSameType(fa, da) << " == false\n";
+    std::cout << std::boolalpha << checkIfSameType(da, ia) << " == false\n";
+    std::cout << std::boolalpha << checkIfSameType(ca, ia) << " == false\n";
+    std::cout << std::boolalpha << checkIfSameType(ca, fa) << " == false\n";
+    std::cout << std::boolalpha << checkIfSameType(ca, da) << " == false\n";
 }
+
+template <typename T>
+class myVector
+{
+public:
+    myVector(std::size_t n = 0) : capacity_(std::max(kMinSize, roundUp(n))),
+                                  size_(0),
+                                  data_(new T[capacity_], array_deleter) {}
+
+    myVector(std::initializer_list<T> il)
+        : capacity_(std::max(roundUp(il.size()), kMinSize)),
+          size_(il.size()),
+          data_(new T[capacity_], array_deleter)
+    {
+        std::copy(il.begin(), il.end(), data_.get());
+        /*int i = 0;
+        for (auto it = il.begin(); it != il.end(); it++)
+        {
+            data_.get()[i++] = *it;
+        }*/
+    }
+
+    T &operator[](std::size_t n)
+    {
+        if (n >= this->size_)
+        {
+            throw std::invalid_argument("myVector operator[]: index out of range");
+        }
+        return data_.get()[n];
+    }
+
+    const T &operator[](std::size_t n) const
+    {
+        if (n >= this->size_)
+        {
+            throw std::invalid_argument("myVector operator[]: index out of range");
+        }
+        //return (*data)[n];
+        return data_.get()[n];
+    }
+
+    T &at(std::size_t n)
+    {
+        if (n >= this->size_)
+        {
+            throw std::invalid_argument("myVector operator[]: index out of range");
+        }
+        return data_.get()[n];
+    }
+
+    const T &at(std::size_t n) const
+    {
+        if (n >= this->size_)
+        {
+            throw std::invalid_argument("myVector operator[]: index out of range");
+        }
+        return data_.get()[n];
+    }
+
+    std::size_t size() const
+    {
+        return this->size_;
+    }
+
+    std::size_t capacity() const
+    {
+        return this->capacity_;
+    }
+
+    bool empty() const
+    {
+        return (this->size_ == 0);
+    }
+
+    void push_back(const T& val)
+    {
+        if (size_ >= capacity_)
+        {
+            try
+            {
+                grow();
+            }
+            catch(const std::exception& e)
+            {
+                std::cerr << e.what() << '\n';
+                return;
+            }
+        }
+        data_.get()[size_++] = val;
+    }
+
+    void push_back(T &&val)
+    {
+        if (size_ >= capacity_)
+        {
+            try
+            {
+                grow();
+            }
+            catch(const std::exception& e)
+            {
+                std::cerr << e.what() << '\n';
+                return;
+            }
+        }
+        data_.get()[size_++] = std::move(val);
+    }
+
+    void pop_back()
+    {
+        if (size_ > 0)
+        {
+            if (--size_ < (capacity_ >> 2))
+            {
+                shrink();
+            }
+        }
+    }
+
+    T *data()
+    {
+        return data_.get();
+    }
+
+    const T* data() const
+    {
+        return data_.get();
+    }
+
+private:
+    std::size_t capacity_;
+    std::size_t size_;
+    static void (*array_deleter)(T *);
+    std::shared_ptr<T> data_;
+    static const std::size_t kMinSize;
+
+    std::size_t roundUp(std::size_t n)
+    {
+        if (n == 0) return 0;
+        std::size_t rounded = kMinSize;
+        while (rounded < n)
+        {
+            rounded <<= 1;  // multiplied by 2
+        }
+        return rounded;
+    }
+
+    void grow()
+    {
+        std::size_t new_capacity = capacity_ * 2;
+        T *new_data = new T[new_capacity];
+        std::copy(data_.get(), data_.get() + size_, new_data);
+        data_.reset(new_data, array_deleter);
+        capacity_ = new_capacity;
+    }
+
+    void shrink()
+    {
+        std::size_t new_capacity = std::max(kMinSize, capacity_ >> 1);
+        if (new_capacity == capacity_)
+        {
+            return;
+        }
+        T *new_data = new T[new_capacity];
+        std::copy(data_.get(), data_.get() + new_capacity, new_data);
+        data_.reset(new_data, array_deleter);
+        capacity_ = new_capacity;
+    }
+};
+
+template <typename T>
+void (*myVector<T>::array_deleter)(T *) = [](T *arr) {
+    std::cout << "(delete the data of a vector)\n";
+    delete[] arr;
+};
+
+template <typename T>
+const std::size_t myVector<T>::kMinSize = 16;
 
 void runAnswerC2()
 {
-    //
+    myVector<int> v{1, 2, 3, 4};
+    std::cout << "At initialization:\n";
+    std::cout << "\tsize of v = " << v.size() << std::endl;
+    std::cout << "\tcapacity of v = " << v.capacity() << std::endl;
+    std::cout << "\telements of v: ";
+    for (int i = 0; i < v.size(); i++)
+    {
+        std::cout << v[i] << " ";
+    }
+    std::cout << std::endl;
+    for (int i = 5; i < 25; i++)
+    {
+        v.push_back(i);
+    }
+    std::cout << "After pushing another 20 elements to v:\n";
+    std::cout << "\tsize of v = " << v.size() << std::endl;
+    std::cout << "\tcapacity of v = " << v.capacity() << std::endl;
+    std::cout << "\telements of v: ";
+    for (int i = 0; i < v.size(); i++)
+    {
+        std::cout << v[i] << " ";
+    }
+    std::cout << std::endl;
+    for (int i = 24; i > 12; i--)
+    {
+        v.pop_back();
+    }
+    std::cout << "After popping out half of the elements of v:\n";
+    std::cout << "\tsize of v = " << v.size() << std::endl;
+    std::cout << "\tcapacity of v = " << v.capacity() << std::endl;
+    std::cout << "\telements of v: ";
+    for (int i = 0; i < v.size(); i++)
+    {
+        std::cout << v[i] << " ";
+    }
+    std::cout << std::endl;
+    for (int i = 12; i > 0; i--)
+    {
+        v.pop_back();
+    }
+    std::cout << "After popping out all the elements of v:\n";
+    std::cout << "\tsize of v = " << v.size() << std::endl;
+    std::cout << "\tcapacity of v = " << v.capacity() << std::endl;
+    std::cout << "\telements of v: ";
+    for (int i = 0; i < v.size(); i++)
+    {
+        std::cout << v[i] << " ";
+    }
+    std::cout << std::endl;
+    std::cout << "v is empty: " << std::boolalpha << v.empty() << std::endl;
 }
-
-
-
-
